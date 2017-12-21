@@ -4,18 +4,27 @@ var Twit = require('twit'); // Importing Twit Library
 var config = require('./config');
 var T = new Twit(config);
 
-var tweet = {
-	status: '#GoodMorning from node.js'
-}
+tweetIt();
 
-T.post('statuses/update',tweet, tweeted);
-
-function tweeted (err, data, response) {
-	if (err){
-		console.log("Nope it didn't work ", response);
-	} else {
-		console.log("Think it worked, go check your profile! " ,data)
+function tweetIt() {
+	var randNum = Math.floor(Math.random()*100);
+	var tweet = {
+		status: 'Here is a random number ' + randNum + ' #helloWorld from node.js'
 	}
+
+
+
+
+	T.post('statuses/update',tweet, tweeted);
+
+	function tweeted (err, data, response) {
+		if (err){
+			console.log("Nope it didn't work ", response);
+		} else {
+			console.log("Think it worked, go check your profile! " ,data)
+		}
+	}
+
 }
 
 // ******* Code section for geting tweets *******
