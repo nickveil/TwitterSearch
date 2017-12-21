@@ -1,27 +1,40 @@
-console.log('The search is starting');
+console.log('The follower is starting');
 
 var Twit = require('twit'); // Importing Twit Library
 var config = require('./config');
 var T = new Twit(config);
 
-tweetIt();
+// ***** Sets up user stream ********
+var stream = T.stream('user');
 
-function tweetIt() {
+
+// ***** Listening for any followers ******
+stream.on('follow', followed);
+
+function followed (event){
+	console.log("Follow event");
+	var name = event.source.name;
+	var screenName = event.source.screen_name;
+	tweetIt('@' + screenName + ' Thanks for following me!');
+
+};
+
+
+
+function tweetIt(msg) {
 	var randNum = Math.floor(Math.random()*100);
 	var tweet = {
-		status: 'Here is a random number ' + randNum + ' #helloWorld from node.js'
+		status: msg
 	}
-
-
 
 
 	T.post('statuses/update',tweet, tweeted);
 
 	function tweeted (err, data, response) {
 		if (err){
-			console.log("Nope it didn't work ", response);
+			console.log("Nope it didn't work ");
 		} else {
-			console.log("Think it worked, go check your profile! " ,data)
+			console.log("Think it worked, go check your profile! ")
 		}
 	}
 
