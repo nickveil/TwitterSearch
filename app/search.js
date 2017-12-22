@@ -4,37 +4,62 @@ var Twit = require('twit'); // Importing Twit Library
 var config = require('./config');
 var T = new Twit(config);
 
-// ***** Sets up user stream ********
-var stream = T.stream('user');
-
-
-// ***** Listening for any followers ******
-stream.on('follow', followed);
-
-function followed (event){
-	console.log("Follow event");
-	var name = event.source.name;
-	var screenName = event.source.screen_name;
-	tweetIt('@' + screenName + ' Thanks for following me!!!');
-	console.log(event);
-};
+var exec = require('child_process').exec;
+var fs = require('fs');
 
 
 
-function tweetIt(msg) {
-	var randNum = Math.floor(Math.random()*100);
-	var tweet = {
-		status: msg
+// // ***** Sets up user stream ********
+// var stream = T.stream('user');
+
+
+// // ***** Listening for any followers ******
+// stream.on('follow', followed);
+
+// function followed (event){
+// 	console.log("Follow event");
+// 	var name = event.source.name;
+// 	var screenName = event.source.screen_name;
+// 	tweetIt('@' + screenName + ' Thanks for following me!!!');
+// 	console.log(event);
+// };
+tweetIt();
+
+
+function tweetIt() {
+	var cmd = 'processing-java --sketch=`pwd`/welcome --run';
+	exec(cmd, processing);
+
+	function processing(){
+		var filename = 'welcome/output.png';
+		var params = {
+			encoding: 'base64'
+		}
+		var b64 = fs.readFileSync(filename, params)
+
+		T.post('media/upload', {media_data: b64 }, uploaded);
+
+		function uploaded (err, data, response){
+			var id = data.media_id_string;
+			var tweet = {
+				status: '#HelloWorld from Node.js.',
+				media_ids: [id]
+			}
+			T.post('statuses/update',tweet, tweeted);
+		}
+
+		console.log('finished');
 	}
 
-
-	T.post('statuses/update',tweet, tweeted);
-
+	// var randNum = Math.floor(Math.random()*100);
+	// var tweet = {
+	// 	status: msg
+	// }
 	function tweeted (err, data, response) {
 		if (err){
 			console.log("Nope it didn't work ");
 		} else {
-			console.log("Think it worked, go check your profile! ")
+			console.log("I think it worked, go check your profile! ")
 		}
 	}
 
