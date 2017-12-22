@@ -15,8 +15,8 @@ function followed (event){
 	console.log("Follow event");
 	var name = event.source.name;
 	var screenName = event.source.screen_name;
-	tweetIt('@' + screenName + ' Thanks for following me!');
-
+	tweetIt('@' + screenName + ' Thanks for following me!!!');
+	console.log(event);
 };
 
 
